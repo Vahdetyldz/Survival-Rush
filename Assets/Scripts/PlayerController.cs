@@ -111,13 +111,19 @@ public class PlayerController : MonoBehaviour
         // Sadece karakterin ölçeðini ters çevir
         Vector3 newScale = transform.localScale;
         newScale.x *= -1; // X eksenini ters çevir
+        /*
         transform.localScale = newScale;
-
-        // Silahlarýn global rotasyonunu koru
-        foreach (GameObject weapon in weapons)
+        float angleOffset = isFacingRight ? 0 : Mathf.PI;
+        for (int i = 0; i < weapons.Count; i++)
         {
-            weapon.transform.localRotation = Quaternion.identity; // Silahlarýn rotasyonunu sýfýrla
-        }
+            float angle = i * Mathf.PI * 2 / maxWeapons + angleOffset;
+            Vector3 newPosition = new Vector3(
+                Mathf.Cos(angle) * weaponRadius,
+                Mathf.Sin(angle) * weaponRadius,
+                0
+            );
+            weapons[i].transform.localPosition = newPosition;
+        }*/
     }
 
 
@@ -154,22 +160,6 @@ public class PlayerController : MonoBehaviour
                     Destroy(gameObject); // Oyuncuyu yok et
                 }
             }
-        }
-    }
-
-    public void AddEnemy(Transform enemy)
-    {
-        if (!enemies.Contains(enemy))
-        {
-            enemies.Add(enemy);
-        }
-    }
-
-    public void RemoveEnemy(Transform enemy)
-    {
-        if (enemies.Contains(enemy))
-        {
-            enemies.Remove(enemy);
         }
     }
 }
