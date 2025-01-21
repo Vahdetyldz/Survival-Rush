@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f; // Karakterin hareket hýzý
     private bool isFacingRight; //Karakterin yönü
     public int playerHealth = 20; //Karakterin caný
-    public float weaponRadius ; // Silahlarýn karakterden uzaklýðý
+    public float weaponRadius; // Silahlarýn karakterden uzaklýðý
     public int maxWeapons = 8; // Maksimum silah sayýsý
 
     public GameObject weaponPrefab; // Silah prefab'ý
@@ -20,14 +20,29 @@ public class PlayerController : MonoBehaviour
         isFacingRight = true; // Karakterin baþlangýçta yüzü ne tarafa dönük olduðunu belirler
         SpawnWeapons();
         healthbar.SetMaxHealth(playerHealth);
+        Flip();
     }
 
     void Update()
     {
         UpdateWeaponDirections();
-
+        UpdateWeaponPositions();
         HandleMovement();
         healthbar.SetHealth(playerHealth);
+    }
+    void UpdateWeaponPositions()
+    {
+        for (int i = 0; i < weapons.Count; i++)
+        {
+            float angle = i * Mathf.PI * 2 / maxWeapons;
+            Vector3 weaponPosition = new Vector3(
+                Mathf.Cos(angle) * weaponRadius,
+                Mathf.Sin(angle) * weaponRadius,
+                0
+            );
+
+            weapons[i].transform.position = transform.position + weaponPosition;
+        }
     }
 
     private void HandleMovement()
@@ -111,19 +126,8 @@ public class PlayerController : MonoBehaviour
         // Sadece karakterin ölçeðini ters çevir
         Vector3 newScale = transform.localScale;
         newScale.x *= -1; // X eksenini ters çevir
-        /*
         transform.localScale = newScale;
-        float angleOffset = isFacingRight ? 0 : Mathf.PI;
-        for (int i = 0; i < weapons.Count; i++)
-        {
-            float angle = i * Mathf.PI * 2 / maxWeapons + angleOffset;
-            Vector3 newPosition = new Vector3(
-                Mathf.Cos(angle) * weaponRadius,
-                Mathf.Sin(angle) * weaponRadius,
-                0
-            );
-            weapons[i].transform.localPosition = newPosition;
-        }*/
+        
     }
 
 
@@ -132,14 +136,9 @@ public class PlayerController : MonoBehaviour
         for (int i = 0; i < maxWeapons/*8*/; i++)
         {
             float angle = i * Mathf.PI * 2 / maxWeapons;
-            Vector3 weaponPosition = new Vector3(
-                Mathf.Cos(angle) * weaponRadius,
-                Mathf.Sin(angle) * weaponRadius,
-                0
-            );
+            Vector3 weaponPosition = new Vector3(Mathf.Cos(angle) * weaponRadius, Mathf.Sin(angle) * weaponRadius, 0);
 
             GameObject weapon = Instantiate(weaponPrefab, transform.position + weaponPosition, Quaternion.identity);
-            weapon.transform.parent = transform; // Silahlarý karaktere baðla
             weapons.Add(weapon);
         }
     }
