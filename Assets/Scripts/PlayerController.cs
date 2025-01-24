@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public int playerGold=500;
     public float speed = 5f; // Karakterin hareket hýzý
     private bool isFacingRight; //Karakterin yönü
     public int playerHealth = 20; //Karakterin caný
@@ -30,16 +31,17 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         healthbar.SetHealth(playerHealth);
     }
+    public void AddWeapon(GameObject newWeapon)
+    {
+        weapons.Add(newWeapon); // Listeye ekle
+        UpdateWeaponPositions(); // Yeni konumlarý güncelle
+    }
     void UpdateWeaponPositions()
     {
         for (int i = 0; i < weapons.Count; i++)
         {
-            float angle = i * Mathf.PI * 2 / maxWeapons;
-            Vector3 weaponPosition = new Vector3(
-                Mathf.Cos(angle) * weaponRadius,
-                Mathf.Sin(angle) * weaponRadius,
-                0
-            );
+            float angle = i * Mathf.PI * 2 / weapons.Count; // Tüm silahlar eþit aralýklarla yerleþir
+            Vector3 weaponPosition = new Vector3(Mathf.Cos(angle) * weaponRadius, Mathf.Sin(angle) * weaponRadius, 0);
 
             weapons[i].transform.position = transform.position + weaponPosition;
         }
@@ -127,13 +129,13 @@ public class PlayerController : MonoBehaviour
         Vector3 newScale = transform.localScale;
         newScale.x *= -1; // X eksenini ters çevir
         transform.localScale = newScale;
-        
+
     }
 
 
     void SpawnWeapons()
     {
-        for (int i = 0; i < maxWeapons/*8*/; i++)
+        for (int i = 0; i < maxWeapons; i++)
         {
             float angle = i * Mathf.PI * 2 / maxWeapons;
             Vector3 weaponPosition = new Vector3(Mathf.Cos(angle) * weaponRadius, Mathf.Sin(angle) * weaponRadius, 0);

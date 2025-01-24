@@ -21,7 +21,7 @@ public class GunManager : MonoBehaviour
         else
         {
             FireAtClosestEnemy();
-            fireCooldown = 1f / fireRate; // Ateþ hýzýný sýfýrla
+            fireCooldown = fireRate; // Ateþ hýzýný sýfýrla
         }
     }
 

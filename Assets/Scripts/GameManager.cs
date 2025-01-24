@@ -8,15 +8,26 @@ public class GameManager : MonoBehaviour
 {
     public GameObject enemy;
     public GameObject x;
-
+    public GameObject purchaseMenu;
     public Text timerText;
-    public float remainingTime = 300f;
+
+    public int currentWave = 0; // Þu anki dalga
+    public int maxWaves = 10; // Maksimum dalga sayýsý
+    private float remainingTime = 20f; 
     private bool isTimerRunning = true;
+    float temp = 0;
+
+    private void Start()
+    {
+        purchaseMenu.SetActive(false);
+        temp = remainingTime;
+        StartCoroutine(StartWave());
+    }
     void Update()
     {
         if (isTimerRunning)
         {
-            if (remainingTime>0)
+            if (remainingTime > 0)
             {
                 remainingTime -= Time.deltaTime;
                 UpdateTimerDisplay();
@@ -26,17 +37,39 @@ public class GameManager : MonoBehaviour
                 isTimerRunning = false;
                 remainingTime = 0;
                 UpdateTimerDisplay();
-                OnTimerEnd(); 
+                OnTimerEnd();
             }
         }
 
     }
-    private Vector3 RandomVector()
+    IEnumerator StartWave()
     {
-        float x = Random.Range(-7f,7f);
-        float y = Random.Range(-10f,7f);
-        Vector3 position = new Vector3(x,y,0);
-        return position;
+        while (currentWave < maxWaves)
+        {
+            currentWave++;
+
+            Debug.Log("Dalga Baþladý: " + currentWave);
+
+            yield return new WaitForSeconds(remainingTime); // Dalga süresi 
+
+            Debug.Log("Dalga Bitti: " + currentWave);
+
+            // Dalga bitince menüyü aç
+            OpenPurchaseMenu();
+
+            // Menü kapalý kalýrken bekle
+            yield return new WaitUntil(() => !purchaseMenu.activeSelf);
+        }
+    }
+    public void OpenPurchaseMenu()
+    {
+        purchaseMenu.SetActive(true);
+        Time.timeScale = 0; // Oyunu durdur
+    }
+    public void ClosePurchaseMenu()
+    {
+        purchaseMenu.SetActive(false);
+        Time.timeScale = 1; // Oyunu devam ettir
     }
 
     private void UpdateTimerDisplay()
@@ -48,6 +81,14 @@ public class GameManager : MonoBehaviour
 
     void OnTimerEnd()
     {
-        // Sayaç bittiðinde yapýlacak iþlemler...
+        
+        /*
+         -Ekrandaki düþmanlarý yok et 
+         -Paralarý toplat
+        -Caný yenile
+        */
+        remainingTime += temp + 5f;
+        temp = remainingTime;
+        isTimerRunning = true;
     }
 }
